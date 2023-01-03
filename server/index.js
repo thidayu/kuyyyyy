@@ -4,16 +4,14 @@ const mysql = require("mysql");
 const cors = require("cors");
 const axios = require("axios");
 const fs = require("fs"),
-      http = require("http"),
-      https = require("https");
+  http = require("http"),
+  https = require("https");
 const Stream = require("stream").Transform;
 
-
-
+app.use("/FR_image", express.static("FR_image"));
+app.use("/Intrusion_image", express.static("Intrusion_image"));
 app.use(cors());
 app.use(express.json());
-
-
 
 // Download Image EMS Helper Function
 var downloadImageFromURL = (url, filename, callback) => {
@@ -43,6 +41,18 @@ const db = mysql.createConnection({
   database: "event",
 });
 
+app.get("/frimage", (req, res) => {
+  const imagelist = fs.readdirSync("./FR_image", (err, filename) => filename);
+  console.log(imagelist)
+  res.send(imagelist);
+});
+
+app.get("/intrusionimage", (req, res) => {
+  const imagelist = fs.readdirSync("./Intrusion_image", (err, filename) => filename);
+  console.log(imagelist)
+  res.send(imagelist);
+});
+
 // Web app เรียก API Event EMS จาก Database
 app.get("/ems_event", (req, res) => {
   db.query("SELECT * FROM frems", (err, result) => {
@@ -54,11 +64,22 @@ app.get("/ems_event", (req, res) => {
   });
 });
 
-
 //Push FR_EMS in Database
 app.post("/fr_event", (req, res) => {
   console.log(req.body);
   const data = req.body;
+  //  axios
+  //     .post("https://www.mewpro.net:7701/Notify/api/Notification/line/send", {
+  //       companyid: "GUARDFORCE",
+  //       password: "Bkav@2020",
+  //       msg: "POP TEST 12",
+  //       msg: "Eventname: " + data.EventName,
+  //     })
+  //     .then((res) => {
+  //       console.log(res.data);
+  //       setData(res.data);
+  //     })
+  //     .catch((err) => console.log(err));
   try {
     const result = db.query(
       `SELECT * FROM frems WHERE eventid = '${data.notificationSourceEventId}'`
@@ -76,7 +97,7 @@ app.post("/fr_event", (req, res) => {
       data.ltEventFile.forEach((file) => {
         downloadImageFromURL(
           `http://192.168.1.254${file.FilePath}`,
-          `./FR_image/${file.FileName}`,
+          `./fr_image/${file.FileName}`,
           function () {
             console.log("done");
           }
@@ -94,6 +115,18 @@ app.post("/fr_event", (req, res) => {
 app.post("/intrusion_event", (req, res) => {
   console.log(req.body);
   const data = req.body;
+  //  axios
+  //     .post("https://www.mewpro.net:7701/Notify/api/Notification/line/send", {
+  //       companyid: "GUARDFORCE",
+  //       password: "Bkav@2020",
+  //       msg: "POP TEST 12",
+  //       msg: "Eventname: " + data.EventName,
+  //     })
+  //     .then((res) => {
+  //       console.log(res.data);
+  //       setData(res.data);
+  //     })
+  //     .catch((err) => console.log(err));
   try {
     const result = db.query(
       `SELECT * FROM intrusionems WHERE eventid = '${data.notificationSourceEventId}'`
@@ -111,7 +144,7 @@ app.post("/intrusion_event", (req, res) => {
       data.ltEventFile.forEach((file) => {
         downloadImageFromURL(
           `http://192.168.1.254${file.FilePath}`,
-          `./Intrusion_image/${file.FileName}`,
+          `./intrusion_image/${file.FileName}`,
           function () {
             console.log("done");
           }
@@ -149,8 +182,6 @@ app.post("/push_event", (req, res) => {
   }
   res.send(req.body);
 });
-
-
 
 app.listen("3300", () => {
   console.log("Server is running on port 3300");

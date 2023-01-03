@@ -5,9 +5,10 @@
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
-    "@material-ui/core": "^4.12.4",
     "@mui/icons-material": "^5.10.6",
-    "@mui/x-data-grid": "^5.17.3",
+    "@mui/material": "^5.10.8",
+    "@mui/styled-engine-sc": "^5.10.6",
+    "@mui/x-data-grid": "^5.17.6",
     "@reduxjs/toolkit": "^1.8.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -19,6 +20,7 @@
     "react-dom": "^18.2.0",
     "react-notifications": "^1.7.4",
     "react-scripts": "5.0.1",
+    "styled-components": "^5.3.6",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
